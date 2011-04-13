@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MobileApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					 xmlns:s="library://ns.adobe.com/flex/spark" 
+					 firstView="views.Note_GroupCottonHome"
+					 xmlns:dao="dao.*" 
+					 xmlns:mx="library://ns.adobe.com/flex/mx"
+					 applicationComplete="applicationCompleteHandler(event)" >
+	<fx:Declarations>
+		<dao:noteDAO id="nodeSrv" />
+		<mx:DateFormatter id="dateFormats" formatString="YYYY-MM-DD HH:NN:SS" />
+	</fx:Declarations>
+	<fx:Metadata>
+		[ResourceBundle("mc")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import dao.DatabaseHelper;
+			
+			import events.DataChangeEvent;
+			
+			import model.note;
+			
+			import mx.events.FlexEvent;
+			
+			import utils.StaticDispatcher;
+			
+			public  var isNeedLoad:Boolean = false;
+			
+			protected function applicationCompleteHandler(event:FlexEvent):void
+			{
+				DatabaseHelper.openDatabase(File.documentsDirectory.resolvePath("cottonNote2.db"));
+				callLater(connOpenHandler);
+			}
+			
+			public  function connOpenHandler():void{
+				StaticDispatcher.dispatchEvent(new Event("isOpened"));
+			}
+			
+			/**
+			 * 
+			 * 更新节点，没有返回提示
+			 * 
+			 * 
+			 * 
+			 * */
+			public function updateNote(id:int,content:String):void{
+				var tempNote:note = new note();
+				tempNote.id = id;
+				tempNote.content = content;
+				tempNote.time = dateFormats.format(new Date());
+				nodeSrv.update(tempNote);
+			}
+			/**
+			 * 删除节点数据，依据id号，没有返回提示。
+			 * 
+			 * 
+			 * */
+			public function deleteNote(id:int):void{
+				nodeSrv.deleteNote(id);
+			}
+			
+		]]>
+	</fx:Script>
+	 
+</s:MobileApplication>

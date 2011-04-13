@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		
+		title="Edit"
+	    actionBarVisible="false">
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import utils.StaticDispatcher;
+			
+			private var currentID:int = 0;
+			
+			override public function set data(value:Object):void{
+				
+				noteContent.text = value.content;
+				
+				currentID = value.id;
+				
+			}
+			
+			public function updateNote():void{
+				this.parentApplication.updateNote(currentID,noteContent.text);
+			}
+			
+			public function deleteNote():void{
+				this.parentApplication.deleteNote(currentID);
+				this.parentApplication.isNeedLoad=true;
+				navigator.popView();
+				
+			}
+			
+			
+			
+			 
+		]]>
+	</fx:Script>
+	<s:TextArea id="noteContent" 
+				width="100%" 
+				height="{this.height - hgroup.height}"  
+				color="black"  
+				skinClass="skins.sheepskin"/>
+	
+	<s:HGroup id="hgroup" bottom="0" width="100%">
+		<s:Button icon="@Embed('assets/edit/delete.png')" click="deleteNote()" width="25%" />
+		<s:Button icon="@Embed('assets/home/save.png')" click="updateNote()" width="25%" />
+		<s:Button icon="@Embed('assets/edit/share.png')"  width="25%" />
+		<s:Button icon="@Embed('assets/edit/back.png')"  click="{this.parentApplication.isNeedLoad=true;navigator.popView();}" width="25%" />
+	</s:HGroup>
+</s:View>

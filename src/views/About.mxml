@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" title="{resourceManager.getString('mc','About.title')}">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Label text="你好吗，android" />
+	<s:Button id="returnButton" 
+			  bottom="0" horizontalCenter="0"
+			  label="{resourceManager.getString('mc','About.returnButton')}"
+			  click="navigator.popView()" />
+</s:View>

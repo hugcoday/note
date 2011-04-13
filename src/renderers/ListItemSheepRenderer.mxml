@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer name="ListItemSheepRenderer"
+				xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="false">
+	<!-- states -->
+	<s:states>
+		<s:State name="normal" stateGroups="normalStates" />
+		<s:State name="hovered" stateGroups="hoveredStates" />
+		<s:State name="selected" stateGroups="selectedStates" />
+		<s:State name="normalAndShowsCaret" stateGroups="normalStates,caretStates" />
+		<s:State name="hoveredAndShowsCaret" stateGroups="hoveredStates,caretStates"/>
+		<s:State name="selectedAndShowsCaret" stateGroups="selectedStates,caretStates"/>
+	</s:states>
+	
+	<s:Rect left="0" right="0" top="0" bottom="0">
+		<s:stroke.caretStates>
+			<s:SolidColorStroke color="{getStyle('selectionColor')}"
+								weight="1"/>
+		</s:stroke.caretStates>
+		<s:fill>
+			<s:SolidColor color.normalStates="{getStyle('contentBackgroundColor')}"
+						  color.hoveredStates="{getStyle('rollOverColor')}"
+						  color.selectedStates="{getStyle('selectionColor')}"
+						  alpha="0.5"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:Label id="labelDisplay"
+			 verticalCenter="0"
+			 left="3" right="3" top="5" bottom="4" />
+	
+</s:ItemRenderer>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"  
+		actionBarVisible="false" 
+		 xmlns:dao="dao.*"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+	    creationComplete="init()"
+		>
+	<fx:Declarations>
+		<dao:noteDAO id="nodeSrv"  />
+		<mx:DateFormatter id="dateFormats" formatString="YYYY-MM-DD HH:NN:SS" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import events.DataChangeEvent;
+			
+			import model.note;
+			
+			import mx.events.IndexChangedEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import utils.StaticDispatcher;
+			 
+			 
+
+			
+			public static var SEARCH_TEXT:String = "Enter search key here"; 
+			
+			public var currentID:int = 0;
+			
+			public function init():void{
+				if(!this.parentApplication.isNeedLoad){
+					StaticDispatcher.addEventListener("isOpened",refresh);
+				}else{
+					search();
+				}
+				
+				trace("isNeedLoad");
+			}
+			
+			public function refresh(event:Event):void{
+				search();
+			}
+			
+			protected function onEnterClickHandler(event:MouseEvent):void
+			{
+				navigator.pushView(About); // push a new view to application
+				
+			}
+			
+			protected function search():void
+			{
+				if (searchKey.text == SEARCH_TEXT)
+					data = nodeSrv.findByName("");
+				else
+					data = nodeSrv.findByName(searchKey.text);
+				
+			}
+			/* 保存当前内容，如果已经保存，将更新当前内容  */
+			protected function save(isNeedRefresh:Boolean=true):void{
+				if(noteContent.text == ""){
+					return;
+				} 
+				/* 新建对象存储数据  */
+				var _note:note = new note();
+				_note.id=nodeSrv.getMaxID()+1;
+				_note.time = dateFormats.format(new Date());
+				_note.content = noteContent.text;
+				
+				if(currentID==0){
+					currentID = _note.id;
+					nodeSrv.create(_note);
+				}else{
+					_note.id = currentID
+					nodeSrv.update(_note);
+					
+				}
+				/* 保存后更新列表 */
+				if(isNeedRefresh){
+					search();
+				}
+				
+				
+			}
+	
+			/* 点击列表时，转入编辑页面 */
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				navigator.pushView(Edit, list.selectedItem);
+				save(false);
+			}
+			
+			/* 新建笔记，清空当前id、以及编辑内容 */
+			private function newNote():void{
+				currentID=0;
+				noteContent.text="";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:TextArea id="noteContent" 
+				width="100%" 
+				height="40%"  
+				color="black"
+				borderAlpha="0"
+			    skinClass="skins.sheepskin"/>
+		
+		 
+		
+	
+	<s:HGroup id="controlBar"  top="{this.height*.4}" 
+			  verticalAlign="middle" 
+			  horizontalAlign="center" 
+			  width="100%">
+		<s:Button icon="@Embed('assets/home/new.png')"   click="newNote()" />
+		<s:Button icon="@Embed('assets/home/save.png')" click="save()" />
+		
+		<s:TextInput id="searchKey" width="200"
+					 text="{SEARCH_TEXT}" focusIn="searchKey.text=''" enter="search()"/>
+		<s:Button id="searchBtn" icon="@Embed('assets/home/search.png')" 
+				  click="search()"/>
+		
+		
+	</s:HGroup>
+	
+	<s:List id="list" 
+			
+			width="100%" 
+			height="{this.height*.6-controlBar.height}" 
+			bottom="0" 
+			dataProvider="{data}" 
+			itemRenderer="renderers.NoteRenderer"
+		    change="list_changeHandler(event)"
+			/>
+	 
+</s:View>
